@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { buildTickets, matchesFilters } from '@/lib/triage'
+import { useDeferredValue, useMemo, useState } from 'react'
+import { buildTickets, matchesFilters, matchesQuery } from '@/lib/triage'
 import type { Filters, RawComplaint, TicketStatus } from '@/lib/types'
 import { CategoryBreakdown } from './category-breakdown'
 import { EMPTY_FILTERS, FilterBar } from './filter-bar'
@@ -13,7 +13,13 @@ export function ConsoleShell({ complaints }: { complaints: RawComplaint[] }) {
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
   const [statuses, setStatuses] = useState<Record<string, TicketStatus>>({})
 
-  const filtered = useMemo(() => complaints.filter((c) => matchesFilters(c, filters)), [complaints, filters])
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
+
+  const filtered = useMemo(
+    () => complaints.filter((c) => matchesFilters(c, filters) && matchesQuery(c, deferredQuery)),
+    [complaints, filters, deferredQuery],
+  )
   const tickets = useMemo(() => buildTickets(filtered), [filtered])
 
   const kpis = useMemo(() => {
@@ -41,6 +47,8 @@ export function ConsoleShell({ complaints }: { complaints: RawComplaint[] }) {
         <FilterBar
           filters={filters}
           onChange={setFilters}
+          query={query}
+          onQueryChange={setQuery}
           visibleReports={filtered.length}
           activeGroups={kpis.groups}
         />

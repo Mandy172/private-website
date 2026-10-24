@@ -14,10 +14,13 @@ import {
 } from '@/lib/triage'
 import type { Filters } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { SearchInput } from './search-input'
 
 interface FilterBarProps {
   filters: Filters
   onChange: (next: Filters) => void
+  query: string
+  onQueryChange: (value: string) => void
   visibleReports: number
   activeGroups: number
 }
@@ -28,7 +31,14 @@ function toggle<T>(list: T[], value: T): T[] {
 
 export const EMPTY_FILTERS: Filters = { categories: [], departments: [], languages: [], severities: [] }
 
-export function FilterBar({ filters, onChange, visibleReports, activeGroups }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  onChange,
+  query,
+  onQueryChange,
+  visibleReports,
+  activeGroups,
+}: FilterBarProps) {
   const count = activeFilterCount(filters)
 
   const chips: { label: string; remove: () => void }[] = [
@@ -53,6 +63,7 @@ export function FilterBar({ filters, onChange, visibleReports, activeGroups }: F
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <SearchInput value={query} onChange={onQueryChange} />
         <Popover>
           <PopoverTrigger
             className={cn(

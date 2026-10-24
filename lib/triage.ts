@@ -61,6 +61,22 @@ export function asLanguage(value: string): Language {
   return (value in LANGUAGE_META ? value : 'en') as Language
 }
 
+export function matchesQuery(c: RawComplaint, query: string) {
+  const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  if (terms.length === 0) return true
+  const haystack = [
+    c.id,
+    c.text,
+    c.location_hint ?? '',
+    c.severity_reason,
+    CATEGORY_META[asCategory(c.category)].label,
+    DEPARTMENT_LABEL[asDepartment(c.department)],
+  ]
+    .join(' ')
+    .toLowerCase()
+  return terms.every((term) => haystack.includes(term))
+}
+
 export function matchesFilters(c: RawComplaint, f: Filters) {
   if (f.categories.length && !f.categories.includes(asCategory(c.category))) return false
   if (f.departments.length && !f.departments.includes(asDepartment(c.department))) return false

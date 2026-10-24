@@ -120,7 +120,7 @@ export function MainFeed({ tickets, statuses, onStatusChange }: MainFeedProps) {
             <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
               <Inbox className="size-5 text-tertiary" strokeWidth={1.5} aria-hidden="true" />
               <p className="text-[13px] font-medium">Nothing here</p>
-              <p className="text-[12px] text-muted-foreground">No tickets match this status and filter combination.</p>
+              <p className="text-[12px] text-muted-foreground">No tickets match this search, status and filter combination.</p>
             </div>
           )
         ) : (
